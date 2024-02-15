@@ -1,0 +1,228 @@
+:root {
+    --font-family-quicksand: 'Quicksand', sans-serif;
+    --progress-bar-bg: #2c2c2c;
+    --main-bg-color: #000000;
+    --box-color: #141414;
+    --main-text-color: #ffffff;
+    --accent-hover-color: #28272f;
+    --shadow-color: #000000;
+    --accent-color: #23a2f6;
+}
+
+*,
+*:before,
+*:after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--main-bg-color);
+    font-family: var(--font-family-quicksand);
+    color: var(--main-text-color);
+}
+
+.background {
+    width: 430px;
+    height: 520px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+}
+
+.background .shape {
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.shape:first-child {
+    background: linear-gradient(
+        #1845ad,
+        #23a2f6
+    );
+    left: -80px;
+    top: -80px;
+}
+
+.shape:last-child {
+    background: linear-gradient(
+        to right,
+        #ff512f,
+        #f09819
+    );
+    right: -30px;
+    bottom: -80px;
+}
+
+form {
+    max-width: 30vw;
+    width: 27%;
+    height: auto;
+    margin: 10vh auto;
+    background-color: rgba(255, 255, 255, 0.13);
+    position: relative; /* Change from absolute to relative */
+    border-radius: 3vw;
+    backdrop-filter: blur(2vh);
+    border: 0.3vw solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 4vw rgba(8, 7, 16, 0.6);
+    padding: 2vh 5vw;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+#loadingRing {
+    border: 8px solid var(--progress-bar-bg);
+    border-top: 8px solid var(--accent-color);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+.loading-message {
+    display: none;
+    font-size: larger;
+    position: relative;
+    margin-top: 25px;
+}
+
+.loading-gif {
+    text-align: center;
+}
+
+.loading-gif img {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+
+/* Rest of your styles remain unchanged */
+
+a {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    padding: 9px 30px;
+    background-color: #ffffff; /* White background color */
+    color: #080710;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+a:hover {
+    background-color: #a9a9a9; /* Change the background color on hover */
+}
+button:hover {
+    background-color: #a9a9a9; /* Change the background color on hover */
+}
+
+button {
+    margin-top: 50px;
+    width: 100%;
+    background-color: #ffffff;
+    color: #080710;
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 550;
+    border-radius: 2vw;
+    cursor: pointer;
+}
+
+.social {
+    margin-top: 30px;
+    display: flex;
+}
+
+.social div {
+    background: red;
+    width: 150px;
+    border-radius: 3px;
+    padding: 5px 10px 10px 5px;
+    background-color: rgba(255, 255, 255, 0.27);
+    color: #eaf0fb;
+    text-align: center;
+}
+
+.social div:hover {
+    background-color: rgba(255, 255, 255, 0.47);
+}
+
+.social .fb {
+    margin-left: 25px;
+}
+
+.social i {
+    margin-right: 4px;
+}
+
+#myProgress {
+    width: 100%;
+    position: relative;
+}
+
+#myBar {
+    width: 0%;
+    height: 30px;
+    background-color: var(--accent-color);
+    border-radius: 5px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.13); /* Form color scheme */
+    border-radius: 10px; /* Form border radius */
+
+    /* Additional styling for consistency with the form */
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+th,
+td {
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Adjusted border color */
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: rgba(255, 255, 255, 0.9); /* Adjusted background color */
+    color: #080710; /* Adjusted text color */
+}
+
+td {
+    background-color: rgba(255, 255, 255, 0.01); /* Adjusted background color */
+    color: #ffffff; /* Adjusted text color */
+}
+
+tr:hover {
+    background-color: var(--accent-hover-color);
+    transition: background-color 0.3s ease;
+}

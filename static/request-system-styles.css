@@ -1,0 +1,178 @@
+:root {
+    --font-family-quicksand: 'Quicksand', sans-serif; /* Define Quicksand font family */
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000000;
+    font-family: var(--font-family-quicksand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
+}
+
+.background {
+    width: 40%; /* Adjusted width for responsiveness */
+    max-width: 30vw; /* Set a maximum width for larger screens */
+    height: 40vh;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+}
+
+.background .shape {
+    height: 15vw;
+    width: 15vw;
+    position: absolute;
+    border-radius: 100%;
+}
+
+.shape:first-child {
+    background: linear-gradient(#1845ad, #23a2f6);
+    left: -7.5vw;
+    top: -18vh;
+}
+
+.shape:last-child {
+    background: linear-gradient(to right, #ff512f, #f09819);
+    right: -7.5vw;
+    bottom: -18vh;
+}
+
+form {
+    max-width: 30vw;
+    width: 27%; /* Adjusted width for responsiveness */
+    height: auto;
+    margin: 10vh auto; /* Centered vertically */
+    background-color: rgba(255, 255, 255, 0.13);
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 3vw;
+    backdrop-filter: blur(2vh);
+    border: 0.3vw solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 4vw rgba(8, 7, 16, 0.6);
+    padding: 2vh 5vw;
+}
+
+@media (max-width: 250px) {
+    form {
+        width: 50%; /* Adjusted width for smaller screens */
+    }
+}
+
+form * {
+    color: #ffffff;
+}
+
+form h1 {
+    font-size: 1.6vw;
+    font-weight: 600;
+    line-height: 5vh;
+    text-align: center;
+    margin-bottom: 2vh;
+    opacity: 0;
+    animation: fadeInHeader 0.25s ease-out forwards;
+}
+
+label {
+    display: block;
+    margin-top: -3vh;
+    font-size: 0.9vw;
+    font-weight: 100;
+    opacity: 0;
+    animation: fadeInLabel 0.25s ease-out forwards;
+}
+
+select,
+input {
+    display: block;
+    backdrop-filter: blur(2vh);
+    height: 3vh;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 2vw;
+    padding: 0 2vw;
+    margin-top: 1vh;
+    font-size: 0.9vw;
+    font-weight: 200;
+    opacity: 0;
+    animation: fadeInInput 0.25s ease-out forwards;
+}
+
+select:focus,
+select:hover {
+    background-color: #28272f;
+}
+
+::placeholder {
+    color: #e5e5e5;
+}
+
+button:hover {
+    background-color: #cccccc;
+}
+
+button {
+    margin-top: 1vh;
+    width: 100%; /* Adjusted width for responsiveness */
+    background-color: #ffffff;
+    color: #080710;
+    padding: 1vh 1vw;
+    font-size: 1.5vw;
+    font-weight: 450;
+    border-radius: 2vw;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeInButton 0.25s ease-out forwards;
+}
+
+@keyframes fadeInHeader {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInLabel {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInInput {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInButton {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

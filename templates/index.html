@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Request System</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <!-- External Stylesheet -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/request-system-styles.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animation.css') }}">
+
+
+</head>
+
+<body>
+        <div id="large-header" class="large-header">
+        <canvas id="demo-canvas"></canvas>
+    </div>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/animation.js') }}"></script>
+
+    <form action="/search" method="POST" class="container">
+        <h1>Data Request System</h1><br>
+
+        <label for="task"><strong>Task:</strong></label>
+        <select name="task" id="task">
+            <option value="">Select an option</option>
+            <option value=".*">All</option>
+			  <option value="Seat_belt" title="Detects whether the occupant is wearing a seat belt or not">Seat Belt</option>
+            <option value="Hands_on_off_steering" title="Monitors whether the driver's hands are on or off the steering wheel">Hands on/off Steering</option>
+            <option value="Gaze_detection" title="Tracks the direction of the driver's gaze for attention analysis">Gaze Detection</option>
+            <option value="Driver_face" title="Identifies and tracks the driver's facial features for monitoring">Driver Face</option>
+            <option value="Driver_pose" title="Detects and analyzes the posture of the driver">Driver Pose</option>
+            <option value="Driver_vitals" title="Monitors the vital signs of the driver">Driver Vitals</option>
+            <option value="Occupant_vitals" title="Monitors the vital signs of the vehicle occupants">Occupant Vitals</option>
+            <option value="Gesture_recognition" title="Recognizes and interprets gestures made by the vehicle occupants">Gesture Recognition</option>
+            <option value="Occupant" title="Tracks and analyzes the behavior of the vehicle occupants">Occupant</option>
+            <option value="Breathing" title="Monitors the breathing patterns of the vehicle occupants">Breathing</option>
+			</select><br><br>
+
+         <label for="sensor"><strong>Sensor:</strong></label>
+        <select name="sensor" id="sensor">
+            <option value="">Select an option</option>
+            <option value=".*">All</option>
+            <option value="Flir">Flir</option>
+            <option value="Azure_IR">Azure IR</option>
+            <option value="Azure_RGB">Azure RGB</option>
+            <option value="Azure_Depth">Azure Depth</option>
+            <option value="Gopro">Gopro</option>
+            <option value="ToF">ToF</option>
+            <option value="TI-Radar">TI-Radar</option>
+            <option value="Vayyar">Vayyar</option>
+            <option value="Intel_rgb">Intel RGB</option>
+        </select><br><br>
+
+        <label for="location"><strong>Location:</strong></label>
+        <select id="location" name="location">
+            <option value="">Select an option</option>
+            <option value="all">All</option>
+            <option value="Lab">Lab</option>
+            <option value="city outskirts">City Outskirts</option>
+            <option value="city (inside bangalore)">City (Inside Bangalore)</option>
+            <option value="Parking">Parking</option>
+        </select><br><br>
+
+        <label for="gender"><strong>Gender:</strong></label>
+        <select name="gender" id="gender">
+            <option value="">Select an option</option>
+            <option value=".*">All</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Trans">Trans</option>
+        </select><br><br>
+
+        <label for="age_from"><strong>From Age:</strong></label>
+        <select name="age_from" id="age_from" onchange="updateToAgeOptions()">
+            <option value="">Select an option</option>
+            {% for age in range(18, 101) %}
+                <option value="{{ age }}">{{ age }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="age_operator"><strong>Operator:</strong></label>
+        <select name="age_operator" id="age_operator">
+            <option value="">Select an option</option>
+            <option value="Range" title="Select this option for a range of ages">Range</option>
+            <option value="And" title="Select this option for combination of ages">And</option>
+        </select><br><br>
+
+        <label for="age_to"><strong>To Age:</strong></label>
+        <select name="age_to" id="age_to">
+            <option value="">Select an option</option>
+        </select><br><br>
+
+        <label for="spectacles"><strong>Spectacles:</strong></label>
+        <select name="spectacles" id="spectacles">
+            <option value="">Select an option</option>
+            <option value=".*">All</option>
+            <option value="With Glasses">With Glasses</option>
+            <option value="No Glasses">No Glasses</option>
+            <option value="Sun Glasses">Sun Glasses</option>
+        </select><br><br>
+
+        <label for="lux_values_range"><strong>Lux Values Range:</strong></label>
+        <select name="lux_values_range" id="lux_values_range">
+            <option value="">Select an option</option>
+            <option value=".*">All</option>
+            <option value="00001 to 00050" title="Low ambience"> 00000 to 00050 </option>
+            <option value="00051 to 00700" title="Moderate ambience"> 00051 to 00700 </option>
+            <option value="00701 to 99999" title="Intense ambience"> 00701 to 99999</option>
+        </select><br><br>
+
+        <label for="extension"><strong>File Extension:</strong></label>
+        <select id="extension" name="extension">
+            <option value="">Select an option</option>
+            <option value=".*">All</option>
+            <option value="npy">npy</option>
+            <option value="jpeg">jpeg</option>
+            <option value="png">png</option>
+            <option value="txt">txt</option>
+            <option value="csv">csv</option>
+            <option value="pcl">pcl</option>
+        </select><br><br>
+        <button type="submit">Submit Query</button>
+        <br><br>
+       <button type="button" onclick="window.location.href='{{ url_for('visualization') }}'" title="Go back to Visualization page">Dashboard</button>
+</form>
+    <script>
+        function updateToAgeOptions() {
+            var fromAgeSelect = document.getElementById('age_from');
+            var toAgeSelect = document.getElementById('age_to');
+
+            toAgeSelect.innerHTML = '<option value="">Select an option</option>';
+
+            var selectedFromAge = fromAgeSelect.value;
+
+            for (var age = parseInt(selectedFromAge) + 1; age <= 100; age++) {
+                var option = document.createElement('option');
+                option.value = age;
+                option.text = age;
+                toAgeSelect.add(option);
+            }
+        }
+    </script>
+</body>
+
+</html>

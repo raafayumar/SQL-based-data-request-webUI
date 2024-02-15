@@ -1,0 +1,114 @@
+/* styles.css */
+
+/* Color Variables */
+:root {
+    --main-bg-color: #ffffff;   /* Subtle background color */
+    --main-text-color: #333;    /* Main text color */
+    --accent-color: #0077cc;    /* Accent color for buttons and links */
+    --accent-hover-color: #005c99; /* Accent color on hover */
+    --shadow-color: rgba(0, 0, 0, 0.1); /* Box shadow color */
+    --progress-bar-bg: #f0f0f0; /* Subtle background color for progress bar */
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+    font-size: 18px;
+}
+
+.container_index {
+    text-align: center;
+    width: 600px;
+}
+
+.container {
+    text-align: center;
+}
+
+.title {
+    color: var(--accent-color);
+}
+
+form {
+    width: 70%;
+    max-width: 600px; /* Adjust the max-width as needed */
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px var(--shadow-color);
+    background-color: var(--main-bg-color);
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--accent-hover-color);
+}
+
+.footer {
+    color: var(--accent-color);
+    font-size: smaller;
+    text-align: right;
+}
+
+#myProgress {
+    width: 100%;
+    background-color: var(--progress-bar-bg);
+    position: relative;
+}
+
+#myBar {
+    width: 0%;
+    height: 30px;
+    background-color: var(--accent-color);
+}
+
+.loading-message {
+    display: none;
+    font-size: larger;
+    padding: 20px;
+    background-color: var(--main-bg-color);
+    border-radius: 5px;
+    box-shadow: 0 0 10px var(--shadow-color);
+    position: relative;
+    margin-top: 20px; /* Adjust as needed */
+}
+
+#loadingRing {
+    border: 8px solid var(--progress-bar-bg);
+    border-top: 8px solid var(--accent-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto; /* Center the ring */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

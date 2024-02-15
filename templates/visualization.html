@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task, Sensor, Location, Spectacles, Gender, Age, and Extension Charts</title>
+    <link rel="stylesheet" href="static/styles.css"> <!-- Include your CSS file -->
+    <style>
+        /* Add these styles to your existing styles or create a new section for custom styles */
+        .custom-button {
+            display: inline-block;
+            margin-top: 20px; /* Adjust the margin as needed */
+            padding: 15px 25px; /* Adjust the padding as needed */
+            background-color: #ffffff;
+            color: #080710;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: background-color 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .custom-button:hover {
+            background-color: #ffffff; /* Change the background color on hover */
+        }
+    </style>
+</head>
+<body>
+     <div>
+         <p>Number of Subjects: {{ sub_numb }}</p>
+    </div>
+
+    <div class="row">
+        <div class="chart-container">
+            <!-- Placeholder for the task chart -->
+            {{ chart_html_task | safe }}
+        </div>
+
+        <div class="chart-container">
+            <!-- Placeholder for the sensor chart -->
+            {{ chart_html_sensor | safe }}
+        </div>
+
+        <div class="chart-container">
+            <!-- Placeholder for the location chart -->
+            {{ chart_html_location | safe }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="chart-container">
+            <!-- Placeholder for the spectacles chart -->
+            {{ chart_html_spectacles | safe }}
+        </div>
+
+        <div class="chart-container">
+            <!-- Placeholder for the gender chart -->
+            {{ chart_html_gender | safe }}
+        </div>
+
+        <div class="chart-container">
+            <!-- Placeholder for the age chart -->
+            {{ chart_html_age | safe }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="chart-container">
+            <!-- Placeholder for the extension chart -->
+            {{ chart_html_extension | safe }}
+        </div>
+
+        <div class="chart-container">
+            <!-- Placeholder for the extension progress chart -->
+            {{ chart_html_extension2 | safe }}
+        </div>
+        <div class="chart-container">
+            <!-- Placeholder for the extension progress chart -->
+            {{ chart_html_lux | safe }}
+        </div>
+    </div>
+
+    <!-- Button to go to the data request page -->
+    <form action="{{ url_for('index') }}" method="get">
+        <button type="submit" class="custom-button">Go to Data Request Page</button>
+    </form>
+
+</body>
+</html>

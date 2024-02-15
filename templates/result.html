@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Search Result</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <!-- Add the link to your external CSS file here -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.0/gsap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/results-styles.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animation.css') }}">
+</head>
+
+<body>
+        <div id="large-header" class="large-header">
+        <canvas id="demo-canvas"></canvas>
+    </div>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/animation.js') }}"></script>
+    <form action="/download" method="post" onsubmit="return confirmDownload();">
+        <h1>Search Summary</h1>
+            <table>
+        <tr>
+            <td><strong>Number of files found:</strong></td>
+            <td>{{ result }}</td>
+        </tr>
+        <tr>
+            <td><strong>Number of Annotated Files:</strong></td>
+            <td>{{ txt_files_count }}</td>
+        </tr>
+        <tr>
+            <td><strong>Total Files:</strong></td>
+            <td>{{ total_files }}</td>
+        </tr>
+        <tr>
+            <td><strong>File size:</strong></td>
+            <td>{{ total_size }} GB</td>
+        </tr>
+    </table>
+
+        {% if result is defined %}<br>
+        <p><strong>Requested options</strong></p>
+               <table>
+
+                {% if task %}
+                    <tr>
+                        <td><strong>Task:</strong></td>
+                        <td>{{ task }}</td>
+                    </tr>
+                {% endif %}
+                {% if sensor %}
+                    <tr>
+                        <td><strong>Sensor:</strong></td>
+                        <td>{{ sensor }}</td>
+                    </tr>
+                {% endif %}
+                {% if location %}
+                    <tr>
+                        <td><strong>Location:</strong></td>
+                        <td>{{ location }}</td>
+                    </tr>
+                {% endif %}
+        {% if gender %}
+            <tr>
+                <td><strong>Gender:</strong></td>
+                <td>{{ gender }}</td>
+            </tr>
+        {% endif %}
+        {% if age_from %}
+            <tr>
+                <td><strong>Age From:</strong></td>
+                <td>{{ age_from }}</td>
+            </tr>
+        {% endif %}
+        {% if age_operator %}
+            <tr>
+                <td><strong>Age Operator:</strong></td>
+                <td>{{ age_operator }}</td>
+            </tr>
+        {% endif %}
+        {% if age_to %}
+            <tr>
+                <td><strong>Age To:</strong></td>
+                <td>{{ age_to }}</td>
+            </tr>
+        {% endif %}
+                {% if spectacles %}
+                    <tr>
+                        <td><strong>Spectacles:</strong></td>
+                        <td>{{ spectacles }}</td>
+                    </tr>
+                {% endif %}
+                {% if lux_values_range %}
+                    <tr>
+                        <td><strong>Lux Values Range:</strong></td>
+                        <td>{{ lux_values_range }}</td>
+                    </tr>
+                {% endif %}
+                {% if extension %}
+                    <tr>
+                        <td><strong>Extension:</strong></td>
+                        <td>{{ extension }}</td>
+                    </tr>
+                {% endif %}
+            </table>
+                <br>
+                <button type="submit">Download Files</button>
+                 <br>
+
+<button type="button" onclick="window.location.href='{{ url_for('refresh') }}'">Back to Search</button>
+        <br><br>
+         <!-- Progress bar container -->
+         <div id="myProgress" style="display: none;">
+            <p>Fetching Files:</p>
+            <div id="myBar"></div>
+            <div id="progressText"></div>
+        </div>
+
+        <div id="loadingMessage" class="loading-message">
+            Please wait, creating zip file...
+
+            <div id="loadingGif" class="loading-gif">
+                <br>
+                <!-- Replace the source with the correct path to your GIF -->
+                <img src="{{ url_for('static', filename='load.gif') }}" alt="Piston and Crankshaft Animation">
+            </div>
+        </div>
+
+    {% else %}
+        <p>No result found</p>
+    {% endif %}
+
+    <script>
+            function confirmDownload() {
+        // Display a confirmation dialog
+        var downloadConfirmed = confirm("Are you sure you want to download the files?");
+
+        // If the user confirms, start the download
+        if (downloadConfirmed) {
+            startDownload();
+            return true; // Allow the form submission
+        } else {
+            return false; // Cancel the form submission
+        }
+    }
+        function startDownload() {
+            var elem = document.getElementById("myBar");
+            var progressText = document.getElementById("progressText");
+            var myProgress = document.getElementById("myProgress");
+            var loadingMessage = document.getElementById("loadingMessage");
+            var loadingGif = document.getElementById("loadingGif");
+            var width = 1;
+            var id = setInterval(frame, 10);
+
+            function frame() {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "/get_progress", true);
+                xhr.send();
+                xhr.onload = function () {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        var progress = parseInt(response.progress);
+                        var done = parseInt(response.done);
+
+                        if (width >= 100 && done === 0) {
+                            // Display piston and crankshaft GIF, hide loading ring
+                            loadingGif.style.display = "block";
+                            loadingMessage.style.display = "block";
+                            myProgress.style.display = "none";
+                        } else {
+                            // If download is still in progress or done, update progress bar and text
+                            width = progress;
+                            elem.style.width = width + "%";
+                            progressText.innerHTML = (width === 100) ? '' : width + "%"; // Update progress text, hide when 100%
+                            myProgress.style.display = "block"; // Show the progress bar container
+                        }
+
+                        if (done === 1) {
+                            // If download is complete, clear the interval and hide loading GIF and message
+                            clearInterval(id);
+                            loadingGif.style.display = "none";
+                            loadingMessage.style.display = "none";
+                            myProgress.style.display = "none"; // Hide the progress bar container
+                        }
+
+                    } catch (error) {
+                        console.error("Error parsing JSON:", error);
+                    }
+                };
+            }
+        }
+    </script>
+</form>
+</body>
+</html>
