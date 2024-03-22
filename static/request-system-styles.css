@@ -110,6 +110,11 @@ input {
     animation: fadeInInput 0.25s ease-out forwards;
 }
 
+select,
+input:not(.input_check) {
+    /* Styles for regular select and input elements excluding checkboxes */
+}
+
 select:focus,
 select:hover {
     background-color: #28272f;
@@ -176,3 +181,40 @@ button {
         opacity: 1;
     }
 }
+
+/* Styles for checkboxes */
+.input_check {
+    display: block;
+    margin-bottom: 10px; /* Add margin below each checkbox and label */
+    backdrop-filter: blur(2vh);
+    height: 1.9vh;
+    width: 10%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 0.9vw;
+    padding: 0 0vw;
+    margin-top: 1.9vh;
+    font-size: 0.9vw;
+    font-weight: 200;
+    opacity: 0;
+    animation: fadeInInput 0.25s ease-out forwards;
+}
+
+#location-checkboxes {
+    display: flex; /* Display checkboxes in a row */
+    flex-wrap: wrap;/* Allow wrapping if needed */
+    justify-content: center; /* Center the checkboxes horizontally */
+    margin-bottom: 20px; /* Add margin for spacing between rows */
+}
+
+#location-checkboxes input[type="checkbox"] {
+    margin-right: 2px; /* Adjust spacing between checkboxes */
+    margin-bottom: 5px; /* Add margin below each checkbox */
+}
+
+#location-checkboxes label {
+    display: block; /* Display each label as a block element */
+    margin-top: 3px; /* Add margin above each label */
+    font-size: 0.9vw; /* Adjust font size for labels */
+}
+
+

@@ -9,7 +9,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import sys
 
-
 path_to_data = r'/home/incabin/DATA/AutoVault/datafolder'
 
 app = Flask(__name__)
@@ -17,7 +16,6 @@ app.secret_key = 'a5e537855c5534969268116424a49312e8f725f6879e626bbedf7dfed9e90a
 
 # Global vars
 abs_filepath = []
-final_abs_path = []
 progress = 0
 total_files = 0
 done = 0
@@ -216,7 +214,7 @@ def generate_extension_pie_chart(cursor):
     for tf in tfiles:
         if not pd.isna(tf):
             total_files += tf
-    print(total_files)
+    # print(total_files)
     return chart_html_extension
 
 
@@ -249,7 +247,7 @@ def generate_age_bar_plot(cursor):
 
 # Function to fetch data from the database and generate the progress chart for extension
 def generate_extension_progress_chart(cursor):
-    print(total_files)
+    # print(total_files)
     # Extension options
     extension_options = '.txt'
     extension_results = {}
@@ -327,6 +325,11 @@ def is_logged_in():
     return 'username' in session
 
 
+# Function to check if the user is logged in
+def is_logged_in():
+    return 'username' in session
+
+
 @app.route('/')
 def index():
     if not is_logged_in():
@@ -358,13 +361,23 @@ def logout():
     return redirect(url_for('login'))
 
 
+annotated_files_paths = []
+not_annotated_path = []
+result = 0
+
+
 @app.route('/search', methods=['POST'])
 def search():
-    global abs_filepath, final_abs_path, total_files
-    conn, cursor = connect_to_mysql()
+    print('SEARCH', file=sys.stdout)
+    global abs_filepath, result, annotated_files_paths, not_annotated_path  # Ensure variables are accessible
 
-    file_size = 0
+    # Initialize variables
+    result = 0
     annotated_files_paths = []
+
+    conn, cursor = connect_to_mysql()
+    file_size = 0
+
     if not is_logged_in():
         return redirect(url_for('login'))
 
@@ -372,12 +385,12 @@ def search():
         # Rest of the code for constructing and executing the SQL query
         task = request.form.get('task')
         sensor = request.form.get('sensor')
-        location = request.form.get('location')
+        date = request.form.get('date')  # Add date query parameter
 
         # Inside the /search route
-        query = "SELECT absolute_path FROM incabin_db.data_path WHERE extension NOT LIKE %s"
+        query = "SELECT absolute_path FROM incabin_db.data_path WHERE extension NOT LIKE %s "
 
-        placeholders = ['%.txt']
+        placeholders = ['%.hpt']
 
         if task and task != '.*' and task != 'all':
             query += f" AND task regexp '\\\\b{task}\\\\b'"
@@ -392,10 +405,25 @@ def search():
             'Parking': 'pa'
         }
 
-        if location and location != '.*' and location != 'all':
-            short_form = location_short_forms.get(location, location)
-            query += " AND location LIKE %s "
-            placeholders.append(f"%{short_form}%")
+        # Inside the /search route
+        locations = request.form.getlist('location')  # Get multiple selected options as a list
+
+        # Construct the query to handle multiple selected options for location
+        if 'all' in locations:
+            # If 'all' is selected, no need to filter by location
+            pass
+        else:
+            if locations and locations != ['.*']:
+                query += " AND ("
+                placeholders_loc = []  # Placeholder list for locations
+                for location in locations:
+                    short_form = location_short_forms.get(location, location)
+                    query += "location LIKE %s OR "
+                    placeholders_loc.append(f"%{short_form}%")
+                # Remove the last ' OR ' from the query
+                query = query[:-4]
+                query += ")"
+                placeholders.extend(placeholders_loc)
 
         # Mapping short forms for gender
         gender_short_forms = {
@@ -458,6 +486,14 @@ def search():
             query += f" AND extension LIKE %s "
             placeholders.append(f"%{extension}%")
 
+        # Add date condition
+        if date:
+            query += f" AND date = %s "
+            placeholders.append(date)
+
+        # print("Query:", query)
+        # print("Placeholders:", placeholders)
+
         cursor.execute(query, tuple(placeholders))
 
         result_path = cursor.fetchall()  # Consuming the result set
@@ -465,41 +501,56 @@ def search():
 
         abs_filepath = [item for sublist in result_path for item in sublist]  # convert the tuple to list
 
-        # Get txt files for selected data
-        for file_path in abs_filepath:
-            txt_file_path = os.path.splitext(file_path)[0] + ".txt"
-            if os.path.exists(txt_file_path):
-                annotated_files_paths.append(txt_file_path)  # creates a list of txt files
+        if len(query) > 75:
+            new_query = query.replace('extension NOT LIKE %s  AND', '')
+            placeholders.pop(0)
+            annotated_data_query = new_query + " AND txt_exist = 1"
+            non_annotated_data_query = new_query + " AND txt_exist = 0"
 
-        # Final list including txt file and data path
-        final_abs_path = abs_filepath + annotated_files_paths
+        else:
+            annotated_data_query = "SELECT absolute_path FROM incabin_db.data_path WHERE txt_exist = 1"
+            non_annotated_data_query = "SELECT absolute_path FROM incabin_db.data_path WHERE txt_exist = 0"
+            placeholders.pop(0)
+
+        # print(new_query)
+        cursor.execute(annotated_data_query, tuple(placeholders))
+        annotated_paths = cursor.fetchall()
+
+        # Has both txt files and the data files
+        annotated_files_paths = [item for sublist in annotated_paths for item in sublist]  # convert the tuple to list
+
+        cursor.execute(non_annotated_data_query, tuple(placeholders))
+        non_annotated_path = cursor.fetchall()
+
+        # has non annotated data files only.
+        not_annotated_path = [item for sublist in non_annotated_path for item in sublist]  # convert the tuple to list
+        # print(len(not_annotated_path))
 
         # Get selected options
         selected_options = {
             'task': task,
             'sensor': sensor,
-            'location': location,
+            'location': locations,
             'gender': gender,
             'age_from': age_from,
             'age_operator': age_operator,
             'age_to': age_to,
             'spectacles': spectacles,
             'lux_values_range': lux_values_range,
-            'extension': extension
+            'extension': extension,
+            'date': date  # Add date to selected options
         }
 
         # Get file size
-        for f in final_abs_path:
+        for f in abs_filepath:
             file_size += os.path.getsize(f)
         total_size = round((file_size / (1024 * 1024 * 1024)), 2)
 
-        # number of files
-        total_files = (len(annotated_files_paths) + result)
-
         # Return a valid response with selected options
         return render_template('result.html', result=result,
-                               txt_files_count=len(annotated_files_paths),
-                               total_size=total_size, total_files=total_files, **selected_options)
+                               txt_files_count=int((len(annotated_files_paths) / 2)),
+                               non_anno_file_count=len(not_annotated_path),
+                               total_size=total_size, **selected_options)
 
     except mysql.connector.Error as err:
         # Handle database errors
@@ -507,17 +558,19 @@ def search():
 
     finally:
         print('cursor closed', file=sys.stdout)
+        if cursor is None:
+            conn, cursor = connect_to_mysql()
         cursor.close()
         close_db()  # Close the database connection
 
 
 def connect_to_mysql():
-    print('called connection')
+    print('called connection', file=sys.stdout)
     global db
     try:
         # Check if the connection is active or if it's None
         if db is None:
-            print('inside if statement')
+            print('inside if statement', file=sys.stdout)
             db = mysql.connector.connect(
                 host="localhost",
                 user="root",
@@ -533,7 +586,7 @@ def connect_to_mysql():
         return db, cursor
 
     except mysql.connector.Error as e:
-        print(f"Error: {e}")
+        print(f"Error: {e}", file=sys.stdout)
         return None, None
 
 
@@ -555,7 +608,18 @@ def download():
     temp_dir = tempfile.mkdtemp()
 
     try:
-        for progress, file_path in enumerate(final_abs_path):
+        # Get the value of include annotated files checkbox
+        include_annotated_files = request.form.get('include_annotated_flag')
+
+        # If include annotated files is checked, include both annotated_files_paths and different_extension_paths
+        if include_annotated_files:
+            files_to_download = annotated_files_paths
+            total_files = len(annotated_files_paths)
+        else:
+            files_to_download = not_annotated_path
+            total_files = len(not_annotated_path)
+
+        for progress, file_path in enumerate(files_to_download):
             dest_path = os.path.join(temp_dir, os.path.relpath(file_path, path_to_data))
             os.makedirs(os.path.dirname(dest_path), exist_ok=True)
             shutil.copyfile(file_path, dest_path)

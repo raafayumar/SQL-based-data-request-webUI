@@ -13,7 +13,6 @@
     <link rel="stylesheet" type="text/css" href="/static/request-system-styles.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animation.css') }}">
 
-
 </head>
 
 <body>
@@ -55,17 +54,26 @@
             <option value="Vayyar">Vayyar</option>
             <option value="Intel_rgb">Intel RGB</option>
         </select><br><br>
+                </select><br><br>
+                <label for="location"><strong>Location:</strong></label>
 
-        <label for="location"><strong>Location:</strong></label>
-        <select id="location" name="location">
-            <option value="">Select an option</option>
-            <option value="all">All</option>
-            <option value="Lab">Lab</option>
-            <option value="city outskirts">City Outskirts</option>
-            <option value="city (inside bangalore)">City (Inside Bangalore)</option>
-            <option value="Parking">Parking</option>
-        </select><br><br>
+            <div id="location-checkboxes">
+                <input type="checkbox" class="input_check" id="all-checkbox" name="location" value="all">
+                <label for="all-checkbox">All</label>
 
+                <input type="checkbox" class="input_check" id="lab-checkbox" name="location" value="Lab">
+                <label for="lab-checkbox">la</label>
+
+                <input type="checkbox" class="input_check" id="city-outskirts-checkbox" name="location" value="city outskirts">
+                <label for="city-outskirts-checkbox">co</label>
+
+                <input type="checkbox" class="input_check" id="city-bangalore-checkbox" name="location" value="city (inside bangalore)">
+                <label for="city-bangalore-checkbox">cc</label>
+
+                <input type="checkbox" class="input_check" id="parking-checkbox" name="location" value="Parking">
+                <label for="parking-checkbox">pa</label>
+            </div>
+<br><br>
         <label for="gender"><strong>Gender:</strong></label>
         <select name="gender" id="gender">
             <option value="">Select an option</option>
@@ -124,27 +132,29 @@
             <option value="csv">csv</option>
             <option value="pcl">pcl</option>
         </select><br><br>
-        <button type="submit">Submit Query</button>
+        <label for="date"><strong>Date:</strong></label>
+        <input type="date" id="date" name="date"><br><br>
+
+        <button type="submit" title="Submit Filtered query">Submit Request</button>
         <br><br>
-       <button type="button" onclick="window.location.href='{{ url_for('visualization') }}'" title="Go back to Visualization page">Dashboard</button>
+       <button type="button" onclick="window.location.href='{{ url_for('visualization') }}'" title="Database Visualization page">Dashboard</button>
 </form>
     <script>
-        function updateToAgeOptions() {
-            var fromAgeSelect = document.getElementById('age_from');
-            var toAgeSelect = document.getElementById('age_to');
+    function updateToAgeOptions() {
+        var fromAgeSelect = document.getElementById('age_from');
+        var toAgeSelect = document.getElementById('age_to');
 
-            toAgeSelect.innerHTML = '<option value="">Select an option</option>';
+        toAgeSelect.innerHTML = '<option value="">Select an option</option>';
 
-            var selectedFromAge = fromAgeSelect.value;
+        var selectedFromAge = fromAgeSelect.value;
 
-            for (var age = parseInt(selectedFromAge) + 1; age <= 100; age++) {
-                var option = document.createElement('option');
-                option.value = age;
-                option.text = age;
-                toAgeSelect.add(option);
-            }
+        for (var age = parseInt(selectedFromAge) + 1; age <= 100; age++) {
+            var option = document.createElement('option');
+            option.value = age;
+            option.text = age;
+            toAgeSelect.add(option);
         }
-    </script>
+    }
+</script>
 </body>
-
 </html>

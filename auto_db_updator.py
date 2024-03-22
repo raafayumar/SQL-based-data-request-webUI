@@ -6,6 +6,8 @@ from watchdog.events import FileSystemEventHandler
 from table_2_updator_module import table_two
 import threading
 import pandas as pd
+import sys
+from datetime import datetime
 
 
 class MyHandler(FileSystemEventHandler):
@@ -49,7 +51,8 @@ class MyHandler(FileSystemEventHandler):
             "Traffic_Data VARCHAR(255),"
             "Run_No VARCHAR(255),"
             "Frame_No VARCHAR(255),"
-            "Extension VARCHAR(255)"
+            "Extension VARCHAR(255),"
+            "txt_exist INT"
             ")"
         )
         self.execute_sql(create_table_sql, ())
@@ -71,6 +74,7 @@ class MyHandler(FileSystemEventHandler):
 
     def connect_to_mysql(self):
         try:
+            # print(datetime.now(), file=sys.stdout)
             # Check if the connection is active or if it's None
             if self.db_connection is None or not self.db_connection.is_connected():
                 self.db_connection = mysql.connector.connect(
@@ -82,19 +86,19 @@ class MyHandler(FileSystemEventHandler):
                     pool_reset_session=True
                 )
 
-                print('Connected to MySQL database')
+                print(datetime.now(), 'Connected to MySQL database', file=sys.stdout)
 
             self.db_cursor = self.db_connection.cursor()
 
         except mysql.connector.Error as e:
-            print(f"Error: {e}")
+            print(datetime.now(), f"Error: {e}", file=sys.stdout)
 
     def close_database_connection(self):
         if self.db_connection is not None and self.db_connection.is_connected():
             self.db_cursor.close()
             self.db_connection.close()
             self.db_connection = None
-            print('Table 1 updated successfully')
+            print(datetime.now(), 'Table 1 updated successfully', file=sys.stdout)
 
     def execute_sql(self, sql, values):
         self.db_cursor.execute(sql, values)
@@ -106,7 +110,7 @@ class MyHandler(FileSystemEventHandler):
             self.extract_and_save_info(event.src_path)
             self.update_database()
             self.created_count += 1  # Increment count for created files
-            print(f"Files created: {self.created_count}")
+            print(datetime.now(), f"Files created: {self.created_count}", file=sys.stdout)
 
             # Cancel the existing timer if it's already running
             if self.reset_timer and self.reset_timer.is_alive():
@@ -118,12 +122,12 @@ class MyHandler(FileSystemEventHandler):
             self.reset_timer.start()
 
     def reset_created_count(self):
-        print("Updating Table 2, Please wait...")
+        print(datetime.now(), "Updating Table 2, Please wait...", file=sys.stdout)
         self.close_database_connection()
         self.created_count = 0
         self.deleted_count = 0
         self.created_count = 0
-        print(table_two())
+        print(datetime.now(), table_two(), file=sys.stdout)
 
     def on_deleted(self, event):
         if not event.is_directory:
@@ -159,11 +163,11 @@ class MyHandler(FileSystemEventHandler):
                 # Start deletion process if there's any change in the set
                 threading.Thread(target=self.delete_from_csv, args=(r'/home/incabin/DATA/AutoVault/metadata/metadata.csv', deletion_pair)).start()
                 self.processed_combinations = self.deletion_set.copy()
-                print("Deletions initiated.")
+                print(datetime.now(), "Deletions initiated.", file=sys.stdout)
 
             self.delete_from_database(event.src_path)
             self.deleted_count += 1  # Increment count for deleted files
-            print(f"Files deleted: {self.deleted_count}")
+            print(datetime.now(), f"Files deleted: {self.deleted_count}", file=sys.stdout)
 
             # Cancel the existing timer if it's already running
             if self.reset_timer and self.reset_timer.is_alive():
@@ -195,7 +199,6 @@ class MyHandler(FileSystemEventHandler):
                 (df['Spectacles'] == deletion_pair[9]) &
                 (df['Run'] == deletion_pair[10])  # Include only rows with the specified Run value
         )
-        # print(mask)
         # Delete the selected row(s)
         df = df[~mask]
 
@@ -218,8 +221,8 @@ class MyHandler(FileSystemEventHandler):
         entry = {'absolute path': file_path, 'task': components[components.index('datafolder') + 1],
                  'sensor': components[components.index('datafolder') + 2],
                  'date': components[components.index('datafolder') + 3],
-                 'time stamp': '', 'subject name': '', 'ph no': '', 'Unique_subjects': '','location': '', 'gender': '', 'age': '',
-                 'spectacles': '', 'lux values': '', 'traffic data': '', 'run no': '', 'frame no': '', 'extension': ''}
+                 'time stamp': '', 'subject name': '', 'ph no': '', 'Unique_subjects': '', 'location': '', 'gender': '', 'age': '',
+                 'spectacles': '', 'lux values': '', 'traffic data': '', 'run no': '', 'frame no': '', 'extension': '', 'txt_exist': ''}
 
         if file_name_parts:
             entry['time stamp'] = file_name_parts[0]
@@ -235,13 +238,17 @@ class MyHandler(FileSystemEventHandler):
             entry['run no'] = file_name_parts[9] if len(file_name_parts) >= 10 else ''
             entry['frame no'], entry['extension'] = os.path.splitext(file_name_parts[-1])
 
+        if os.path.splitext(file_path)[0] != '.txt':
+            txt_file_path = file_path.replace(entry['extension'], ".txt")
+            entry['txt_exist'] = 1 if os.path.exists(txt_file_path) else 0
+
         # Save the entry to the MySQL database
         sql = ("INSERT INTO incabin_db.data_path (`sl_no`, `Absolute_Path`, `Task`, `Sensor`, `Date`, `Time_Stamp`, "
                "`Subject_Name`, `Ph_No`,`Unique_subjects`, `Location`, `Gender`, `Age`, `Spectacles`, `Lux_Values`, "
-               "`Traffic_Data`, `Run_No`, `Frame_No`, `Extension`) "
+               "`Traffic_Data`, `Run_No`, `Frame_No`, `Extension`, `txt_exist`) "
                "VALUES (NULL, %(absolute path)s, %(task)s, %(sensor)s, %(date)s, %(time stamp)s, "
                "%(subject name)s, %(ph no)s,  %(Unique_subjects)s, %(location)s, %(gender)s, %(age)s, %(spectacles)s, "
-               "%(lux values)s, %(traffic data)s, %(run no)s, %(frame no)s, %(extension)s)")
+               "%(lux values)s, %(traffic data)s, %(run no)s, %(frame no)s, %(extension)s, %(txt_exist)s)")
         self.execute_sql(sql, entry)
 
     def update_database(self):
@@ -259,8 +266,8 @@ class MyHandler(FileSystemEventHandler):
         insert_sql = (
             "INSERT INTO incabin_db.data_path "
             "(Absolute_Path, Task, Sensor, Date, Time_Stamp, Subject_Name, Ph_No, Unique_subjects, Location, Gender, Age, "
-            "Spectacles, Lux_Values, Traffic_Data, Run_No, Frame_No, Extension) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            "Spectacles, Lux_Values, Traffic_Data, Run_No, Frame_No, Extension, txt_exist) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         )
         for entry in new_entries:
             self.db_cursor.execute(insert_sql, entry[1:])

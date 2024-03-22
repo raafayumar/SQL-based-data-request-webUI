@@ -21,16 +21,16 @@
         <h1>Search Summary</h1>
             <table>
         <tr>
-            <td><strong>Number of files found:</strong></td>
+            <td><strong>Total files found:</strong></td>
             <td>{{ result }}</td>
         </tr>
         <tr>
-            <td><strong>Number of Annotated Files:</strong></td>
+            <td><strong>Number of Annotated Date Files:</strong></td>
             <td>{{ txt_files_count }}</td>
         </tr>
         <tr>
-            <td><strong>Total Files:</strong></td>
-            <td>{{ total_files }}</td>
+            <td><strong>Number of Non Annotated Files:</strong></td>
+            <td>{{ non_anno_file_count }}</td>
         </tr>
         <tr>
             <td><strong>File size:</strong></td>
@@ -102,10 +102,25 @@
                         <td>{{ extension }}</td>
                     </tr>
                 {% endif %}
+				{% if date %}
+            <tr>
+                <td><strong>Date:</strong></td>
+                <td>{{ date }}</td>
+            </tr>
+            {% endif %}
             </table>
+			<br><br>
+			 <p><strong>Your Download preference</strong></p>
+			 <br>
+                <label for="include_annotated_flag">
+                    <input type="checkbox" id="include_annotated_flag" name="include_annotated_flag" onchange="handleCheckboxChange('option1')" /> Annotated Data
+                </label>
+                <label for="option2">
+                    <input type="checkbox" id="option2" name="option" onchange="handleCheckboxChange('option2')" /> Non Annotated Data
+                </label>
                 <br>
                 <button type="submit">Download Files</button>
-                 <br>
+                <br>
 
 <button type="button" onclick="window.location.href='{{ url_for('refresh') }}'">Back to Search</button>
         <br><br>
@@ -130,6 +145,7 @@
         <p>No result found</p>
     {% endif %}
 
+   
     <script>
             function confirmDownload() {
         // Display a confirmation dialog
