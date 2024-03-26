@@ -102,12 +102,24 @@
                         <td>{{ extension }}</td>
                     </tr>
                 {% endif %}
-				{% if date %}
+        {% if date_from %}
             <tr>
-                <td><strong>Date:</strong></td>
-                <td>{{ date }}</td>
+                <td><strong>From Date:</strong></td>
+                <td>{{ date_from }}</td>
             </tr>
-            {% endif %}
+        {% endif %}
+        {% if date_operator %}
+            <tr>
+                <td><strong>Date Operator:</strong></td>
+                <td>{{ date_operator }}</td>
+            </tr>
+        {% endif %}
+        {% if date_to %}
+            <tr>
+                <td><strong>To Date:</strong></td>
+                <td>{{ date_to }}</td>
+            </tr>
+        {% endif %}
             </table>
 			<br><br>
 			 <p><strong>Your Download preference</strong></p>

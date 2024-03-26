@@ -132,8 +132,20 @@
             <option value="csv">csv</option>
             <option value="pcl">pcl</option>
         </select><br><br>
-        <label for="date"><strong>Date:</strong></label>
-        <input type="date" id="date" name="date"><br><br>
+         <label for="date_from"><strong>From Date:</strong></label>
+            <input type="date" id="date_from" name="date_from" onchange="updateFromDateOptions()">
+        </select><br><br>
+
+        <label for="date_operator"><strong>Operator:</strong></label>
+        <select name="date_operator" id="date_operator">
+            <option value="">Select an option</option>
+            <option value="Range" title="Select this option for a range of dates">To</option>
+            <option value="And" title="Select this option for combination of ages">And</option>
+        </select><br><br>
+
+        <label for="date_to"><strong>To Date:</strong></label>
+            <input type="date" id="date_to" name="date_to" onchange="updateToDateOptions()">
+        </select><br><br>
 
         <button type="submit" title="Submit Filtered query">Submit Request</button>
         <br><br>
@@ -155,6 +167,18 @@
             toAgeSelect.add(option);
         }
     }
+	
+	function updateFromDateOptions() {
+    var fromDate = document.getElementById("date_from").value;
+    document.getElementById("date_to").setAttribute("min", fromDate);
+}
+
+function updateToDateOptions() {
+    var toDate = document.getElementById("date_to").value;
+    document.getElementById("date_from").setAttribute("max", toDate);
+}
+
+
 </script>
 </body>
 </html>

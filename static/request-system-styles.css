@@ -52,7 +52,7 @@ form {
     max-width: 30vw;
     width: 27%; /* Adjusted width for responsiveness */
     height: auto;
-    margin: 10vh auto; /* Centered vertically */
+    margin: 25vh auto; /* Centered vertically */
     background-color: rgba(255, 255, 255, 0.13);
     position: absolute;
     top: 45%;

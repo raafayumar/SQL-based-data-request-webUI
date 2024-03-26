@@ -487,12 +487,20 @@ def search():
             placeholders.append(f"%{extension}%")
 
         # Add date condition
-        if date:
-            query += f" AND date = %s "
-            placeholders.append(date)
+        date_from = request.form.get('date_from')
+        date_operator = request.form.get('date_operator')
+        date_to = request.form.get('date_to')
 
-        # print("Query:", query)
-        # print("Placeholders:", placeholders)
+        if date_from and date_from != '.*':
+            if date_operator == 'Range' and date_to and date_to != '.*':
+                query += f" AND date BETWEEN %s AND %s OR date IS NULL"
+                placeholders.extend([date_from, date_to])
+            elif date_operator == 'And' and date_to and date_to != '.*':
+                placeholders.extend([date_from, date_to])
+                query += f" AND date = %s OR date = %s OR age IS NULL"
+            else:
+                query += f" AND date = %s OR date IS NULL"
+                placeholders.append(date_from)
 
         cursor.execute(query, tuple(placeholders))
 
@@ -538,7 +546,9 @@ def search():
             'spectacles': spectacles,
             'lux_values_range': lux_values_range,
             'extension': extension,
-            'date': date  # Add date to selected options
+            'date_from': date_from,
+            'date_operator': date_operator,
+            'date_to': date_to
         }
 
         # Get file size
